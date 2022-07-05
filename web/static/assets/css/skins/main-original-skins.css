@@ -1,0 +1,435 @@
+br {
+    font-family: Arial;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.clear {
+    clear: both;
+    width: 100%;
+    height: 0;
+    display: block;
+    float: none;
+}
+
+.inline {
+    display: inline-flex;
+}
+
+.center {
+    text-align: center;
+}
+
+.hide {
+    display: none;
+}
+
+.pos-rel {
+    position: relative;
+}
+
+.pos-abs {
+    position: absolute;
+}
+
+.pos-fix {
+    position: fixed;
+}
+
+.container-fluid, footer {
+    /* min-width: 1280px; */
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+}
+
+.container {
+    padding-left: 0px;
+    padding-top: 0px;
+    padding-right: 0px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.h-menu {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-right: 0px;
+}
+
+.h-menu li {
+    float: left;
+    list-style-type: none;
+    padding-left: 0px;
+}
+
+.v-menu {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.v-menu li {
+    list-style-type: none;
+}
+
+.color-primary {
+    color: #00adba;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a:focus {
+    text-decoration: none;
+}
+
+h1, p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+body {
+    font-size: 18px;
+}
+
+h1 {
+    font-size: 36px;
+}
+
+.link-button {
+    color: white;
+    font-size: 18px;
+    background-color: #00adba;
+    border-radius: 12px !important;
+    padding-left: 20px;
+    padding-right: 20px;
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    vertical-align: middle;
+}
+
+.link-button:hover {
+    color: white;
+}
+
+#top-area, #bottom-area {
+    background-color: #00adba;
+    color: white;
+}
+
+#top-area {
+    height: 80px;
+}
+
+#top-banner {
+    margin-left: 40px;
+    line-height: 80px;
+    vertical-align: middle;
+    font-size: 36px;
+}
+
+.menu-list {
+    margin-right: 50px;
+    line-height: 80px;
+    vertical-align: middle;
+    font-size: 20px;
+}
+
+.menu-list a {
+    color: white;
+}
+
+.menu-list li {
+    padding-left: 60px;
+}
+
+#bottom-area-infos {
+    margin-left: 40px;
+    margin-bottom: 20px;
+}
+
+#bottom-banner {
+    font-size: 20px;
+    line-height: 60px;
+}
+
+#bottom-area-infos p {
+    font-size: 16px;
+    line-height: 22px;
+}
+
+#company-mission-vision-area {
+    background-color: #F2F2F2;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+#company-mission-vision-item-container {
+    margin: auto;
+    width: 1040px;
+}
+
+.company-mission-vision-item {
+    width: 440px;
+    height: 220px;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 21px !important;
+}
+
+#company-vision-item {
+    margin-left: 160px;
+}
+
+.company-misson-label {
+    margin-left: 12px;
+    font-size: 26px;
+    line-height: 54px;
+    vertical-align: middle;
+}
+
+.company-misson-step-line {
+    width: 425px;
+    height: 16px;
+    margin-left: 6px;
+    background-image: url(../img/h_step.png);
+    background-repeat: repeat-x;
+}
+
+.company-misson-detail {
+    font-size: 18px;
+    line-height: 32px;
+    margin-top: 15px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#company-news-label {
+    font-size: 26px;
+    line-height: 60px;
+    margin-left: 40px;
+}
+
+#company-news-area {
+    margin-left: 140px;
+}
+
+#company-news-area li {
+    font-size: 18px;
+    line-height: 40px;
+    margin-bottom: 20px;
+}
+
+#company-news-area li a {
+    color: black;
+    margin-left: 28px;
+    margin-right: 28px;
+    padding-left: 20px;
+    padding-right: 20px;
+    height: 40px;
+    border: 1px solid #808080;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+#news-more {
+    margin-right: 40px;
+    margin-bottom: 10px;
+}
+
+#work-summary-label {
+    line-height: 60px;
+    height: 60px;
+    vertical-align: middle;
+    margin-bottom: 15px;
+}
+
+#work-summary-detail {
+    /* margin-left: 160px; */
+    margin: 0 auto;
+    margin-bottom: 60px;
+    width: 1040px;
+    font-size: 18px;
+
+}
+
+#company-products-area {
+    margin-bottom: 40px;
+}
+
+#company-products-container {
+    margin: auto;
+    width: 1040px;
+}
+
+.company-product-item {
+    width: 320px;
+    height: 340px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 30px;
+    margin-right: 40px;
+}
+
+#company-product-item3 {
+    margin-right: 0px;
+}
+
+.company-product-label {
+    line-height: 60px;
+}
+
+.company-product-detail {
+    margin-left: 30px;
+    margin-right: 30px;
+    text-align: left;
+    line-height: 24px;
+}
+
+#pedo-visor-app-icon {
+    margin-top: 8px;
+    margin-bottom: 5px;
+}
+
+#pedo-web-icon {
+    margin-top: 10px;
+    width: 280px;
+}
+
+#pedo-dev-icon {
+    margin-top: 5px;
+    width: 280px;
+}
+
+#company-summary-label {
+    line-height: 80px;
+}
+
+#company-infos-area {
+    margin-left: 245px;
+    margin-bottom: 45px;
+}
+
+#company-infos-area li {
+    margin-bottom: 10px;
+}
+
+.v-step-icon {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.company-info-label {
+    margin-left: 40px;
+    width: 130px;
+    line-height: 34px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.company-info-value {
+    line-height: 34px;
+    display: inline-block;
+}
+
+#company-address-label {
+    line-height: 80px;
+}
+
+#company-address-area {
+    margin: auto;
+    width: 1200px;
+}
+
+#company-address-map {
+    width: 625px;
+    height: 500px;
+    margin-right: 30px;
+    margin-bottom: 20px;
+}
+
+footer {
+    height: auto;
+    font-size: 16px;
+    line-height: 40px;
+}
+
+.link-appstore {
+    width: 100%;
+    bottom: 50px;
+}
+
+.link-appstore > a {
+    color: #ffffff;
+    background-color: #000000;
+    font-size: 18px;
+    margin: 0 10px;
+    padding: 10px 15px;
+    border-radius: 15px !important;
+}
+
+.work-summary-label {
+    line-height: 60px;
+    height: 60px;
+    vertical-align: middle;
+    margin-bottom: 15px;
+    font-weight: 800;
+}
+
+.concept-box {
+    padding: 0 150px;
+}
+.content-text0{
+    font-weight: 600;
+    font-size: 22px;
+}
+.content-text1 {
+    line-height: 60px;
+    height: 60px;
+    font-weight: 800;
+    font-size: 30px;
+    color: #ED1E79;
+}
+.concept-box ul{
+    margin-left: 50px;
+    font-size: 22px;
+}
+.content-text2 {
+    font-weight: 800;
+    font-size: 18px;
+    color: #ED1E79;
+}
+.content-detail{
+    padding:0 50px;
+}
+.content-essue{
+    display: inline-flex;
+}
+.content-essue1{
+    margin: 0 2vw 20px 2vw;
+    width:17vw;
+}
+.content-essue2{
+    width:34vw;
+}
+.content-essue3{
+    width:34vw;
+}
+
+.content-essue img{
+    width:15.5vw;
+}

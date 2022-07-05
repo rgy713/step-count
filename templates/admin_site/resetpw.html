@@ -1,0 +1,97 @@
+{% extends "admin_site/layout.html" %}
+{% block content %}
+    <section class="login-content">
+        <div class="logo text-center">
+            <h1>パスワード再登録</h1>
+        </div>
+        <div class="login-box">
+            <form class="login-form" method="POST" action="{% url 'admin.resetpw' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="control-label">メールアドレス</label>
+                    <input id="email" type="text" class="form-control" name="email" readonly value="{{email}}">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">パスワード</label>
+                    <input id="password" type="password" class="form-control" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">パスワード確認</label>
+                    <input id="passwordcf" type="password" class="form-control" name="passwordcf" required>
+                </div>
+                {% if error %}
+                    <span style="color:red;font-size: 80%;" role="alert">
+                        <strong>{{error}}</strong>
+                    </span>
+                {% endif %}
+                <div class="form-group">
+                    <div class="utility">
+                        <a class="mr-3" href="{% url 'adminLogin' %}">
+                            <span>ログインウィンドウで</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="form-group btn-container">
+                    <button class="btn btn-primary btn-block"><i class="fa fa-sign-in fa-lg fa-fw"></i>適用</button>
+                </div>
+                <input type="hidden" name="next" value="">
+            </form>
+        </div>
+    </section>
+{% endblock %}
+{% block js %}
+<script>
+    $(document).ready(function () {
+
+        $("#reset_form").validate({
+            // Rules for form validation
+            rules: {
+                email: {
+                    required: true,
+                    email: true
+                },
+                password: {
+                    required: true,
+                    minlength: 6
+                },
+                passwordcf: {
+                    required: true,
+                    minlength: 6,
+                    equalTo: "#password"
+                },
+            },
+
+            // Messages for form validation
+            messages: {
+                email: {
+                    required: 'メールアドレスを入力してください。',
+                    email: 'メールアドレスを正確に入力してください。'
+                },
+                password: {
+                    required: 'パスワードを入力してください。',
+                    minlength: 'パスワードを8席以上に設定してください。'
+                },
+                passwordcf: {
+                    required: 'パスワードを入力しなおしてください。',
+                    minlength: 'パスワードを8席以上に設定してください。',
+                    equalTo: 'パスワードと一致しません。'
+                },
+            },
+
+            // Do not change code below
+            errorPlacement: function (error, element) {
+                if ($(element).attr("name") == "email") {
+                    error.insertAfter(element.parent());
+                } else if ($(element).attr("name") == "password") {
+                    error.insertAfter(element.parent());
+                } else if ($(element).attr("name") == "passwordcf") {
+                    error.insertAfter(element.parent());
+                } else {
+                    $(element).parent().parent().addClass("state-error");
+                    $(error).insertAfter(element.parent().parent());
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

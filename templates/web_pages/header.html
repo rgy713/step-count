@@ -1,0 +1,24 @@
+{% load i18n static %}
+<header class="main-header">
+    <div class="logo_part">
+        <a href="{% url 'web_index' %}" class="logo_txt white_font_color">株式会社ＤＥＰＥＮＤＡ</a>
+    </div>
+    <div class="head_menu_part">
+        <a class="mobile_head" style="height: 80px;"><img src="{% static 'assets/images/menu.png' %}" width="80"
+                                                          style="float: left;" alt="menu"/></a>
+        <ul>
+            <li><a class="white_font_color" href="{% url 'web_index' %}">HOME</a></li>
+            <li><a class="white_font_color" href="http://dependa.co.jp">Company</a></li>
+            <li><a class="white_font_color" href="http://dependa.co.jp/overview">Service</a></li>
+            <li><a class="white_font_color" href="http://dependa.co.jp/inquery">Contact</a></li>
+        </ul>
+    </div>
+</header>
+<div class="head_menu_extend">
+    <ul>
+        <li><a class="white_font_color" style="padding-left: 8px;" href="#">HOME</a></li>
+        <li><a class="white_font_color" style="padding-left: 8px;" href="http://dependa.co.jp">Company</a></li>
+        <li><a class="white_font_color" style="padding-left: 8px;" href="http://dependa.co.jp/overview">Service</a></li>
+        <li><a class="white_font_color" href="http://dependa.co.jp/inquery">Contact</a></li>
+    </ul>
+</div>

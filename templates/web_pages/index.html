@@ -1,0 +1,28 @@
+{% extends "web_pages/layout.html" %}
+{% block content %}
+{% include "web_pages/header.html" %}
+{% load i18n static %}
+<section>
+    <div class="top_img">
+        <img src="{% static 'assets/images/home_banner_img.png' %}" alt="">
+    </div>
+</section>
+<section>
+    <div class="top_img">
+        <a href="{% url 'pedovisor_home'%}"><img src="{% static 'assets/images/work_summary_banner_img.png' %}" alt=""></a>
+    </div>
+</section>
+<section style="background-color:#FFF;">
+    <div class="list_news_part">
+        <h1>ニュース</h1>
+        {% for one in news %}
+        <div class="notice_item_part">
+            <p class="notice_item_date">{{one.date}}</p>
+            <p class="notice_item_title">{{one.title}}</p>
+            <p class="notice_item_content">{{one.content}}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% include "web_pages/footer.html" %}
+{% endblock %}

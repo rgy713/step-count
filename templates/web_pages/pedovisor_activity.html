@@ -1,0 +1,102 @@
+{% extends "web_pages/layout.html" %}
+{% block content %}
+{% include "web_pages/header_f1.html" %}
+{% load i18n static %}
+
+{% include "web_pages/nav.html" %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mt-5">
+            <div class="tile">
+                <div class="tile-body">
+                    <table id="table" class="responsive display nowrap table table-bordered table-hover" cellspacing="0"
+                           width="100%">
+                        <thead>
+                        <tr>
+                            <th class="text-center">NO</th>
+                            <th class="text-center">日付</th>
+                            <th class="text-center">アクティビティ名</th>
+                            <th class="text-center">歩数</th>
+                            <th class="text-center">距離(km)</th>
+                            <th class="text-center">歩幅(cm)</th>
+                            <th class="text-center">タイム</th>
+                            <th class="text-center" style="width: 10%">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        function DtRender_edit_function(data, type, full, meta)
+        {
+            html ='<a href="' + "{% url 'pedovisor_dashboard' %}" + '?data_id=' + full.id + '">' +
+                '<button style="padding: 5px 10px 5px 10px;" class="btn btn-info"><i class="fa fa-edit"></i></button></a>';
+            return html;
+        }
+
+        function DtRender_starttime_function(data, type, full, meta){
+            return utc2local(data);
+        }
+
+        $('#table').dataTable({
+            processing: true,
+            serverSide: true,
+            pageLength: 10,
+            language: {
+                "sProcessing": "処理中...",
+                "sSearch": "検索キー",
+                "sLengthMenu": "顕示 &nbsp; _MENU_ &nbsp;項",
+                "sZeroRecords": "検索結果がありません。",
+                "sInfo": "顕示 _START_ から _END_ 項結果，総て _TOTAL_ 項",
+                "sInfoEmpty": "顕示 0から 0項結果，総て 0項')",
+                "sEmptyTable": "検索結果がありません。",
+                "sLoadingRecords": "ローディング中...",
+                "paginate": {
+                    "previous": "以前",
+                    "next": "以後"
+                }
+            },
+            ajax: {
+                "url": "{% url 'pedovisor_get_activity_list' %}",
+                "type": "POST"
+            },
+            columns: [
+                {name: "number", data: "number", defaultContent: "", className: "dt-center", orderable: false},
+                {
+                    name: "start_time",
+                    data: "start_time",
+                    defaultContent: "",
+                    className: "dt-center",
+                    orderable: true,
+                    searchable: false,
+                    render: DtRender_starttime_function
+                },
+                {name: "activity_name", data: "activity_name", defaultContent: "", className: "dt-center", orderable:false},
+                {name: "step_count", data: "step_count", defaultContent: "", className: "dt-center",},
+                {name: "distance", data: "distance", defaultContent: "", className: "dt-center"},
+                {name: "step_size", data: "step_size", defaultContent: "", className: "dt-center",},
+                {name: "duration", data: "duration", defaultContent: "", className: "dt-center", orderable:false},
+                {
+                    name: "id",
+                    data: "id",
+                    defaultContent: "",
+                    className: "dt-center",
+                    orderable: false,
+                    render: DtRender_edit_function
+                }
+            ],
+            order: [[1, 'desc']]
+        });
+
+        $.fn.dataTable.ext.errMode = 'none';
+    });
+
+</script>
+{% include "web_pages/footer.html" %}
+{% endblock %}

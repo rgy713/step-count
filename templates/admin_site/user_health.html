@@ -1,0 +1,599 @@
+{% extends "admin_site/base_site.html" %}
+{% load i18n static %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i> {{username}}: 健康習慣一覧</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item"><a href="#">健康習慣一覧</a></li>
+        </ul>
+    </div>
+    {% if user_id %}
+    <div class="row">
+        <div class="col-md-12 mt-5">
+            <div class="tile">
+                <div class="tile-title">
+                    <h1>⾷事習慣</h1>
+                </div>
+
+                <div class="tile-body">
+                    <table id="mealTable" class="responsive display nowrap table table-bordered table-hover" cellspacing="0"
+                           width="100%">
+                        <thead>
+                        <tr>
+                            <th class="text-center">NO</th>
+                            <th class="text-center">日付</th>
+                            <th class="text-center">登録時間</th>
+                            <th class="text-center" style="width: 15%">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mt-5">
+            <div class="tile">
+                <div class="tile-title">
+                    <h1>睡眠習慣</h1>
+                </div>
+
+                <div class="tile-body">
+                    <table id="sleepTable" class="responsive display nowrap table table-bordered table-hover" cellspacing="0"
+                           width="100%">
+                        <thead>
+                        <tr>
+                            <th class="text-center">NO</th>
+                            <th class="text-center">就寝時間</th>
+                            <th class="text-center">起床時間</th>
+                            <th class="text-center">睡眠時間</th>
+                            <th class="text-center">登録時間</th>
+                            <th class="text-center" style="width: 15%">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="modal fade" id="meal_creater" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md" role="document" style="z-index: 1050;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">⾷事習慣登録</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="clearfix margin-bottom-10">
+                    <form id="meal_reg_form" accept-charset="UTF-8" class="sky-form" action=""
+                          method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value=""/>
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group fg-float ">
+                                        <label class="fg-label">日付</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="form-group fg-float ">
+                                        <div class="fg-line input-append date">
+                                            <input type="text" name="reg_date" id="reg_date" data-format="YYYY-MM-DD" data-template="YYYY年MM月DD日" value="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% for food in food_list %}
+                            <input type="hidden" name="meal_info_id[{{food.id}}]" id="meal_info_id_{{food.id}}" value=""/>
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <div class="form-group fg-float ">
+                                        <label class="fg-label">{{ food.name }}</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-7">
+                                    <div class="form-group fg-float ">
+                                        <div class="custom-control custom-checkbox custom-control-inline">
+                                              <input name="breakfast[{{food.id}}]" type="checkbox" class="custom-control-input" id="breakfast_{{food.id}}" value="1">
+                                              <label class="custom-control-label" for="breakfast_{{food.id}}">朝⾷</label>
+                                        </div>
+                                        <!-- Default inline 2-->
+                                        <div class="custom-control custom-checkbox custom-control-inline">
+                                              <input name="lunch[{{food.id}}]" type="checkbox" class="custom-control-input" id="lunch_{{food.id}}" value="1">
+                                              <label class="custom-control-label" for="lunch_{{food.id}}">昼⾷</label>
+                                        </div>
+                                        <!-- Default inline 3-->
+                                        <div class="custom-control custom-checkbox custom-control-inline">
+                                              <input name="dinner[{{food.id}}]" type="checkbox" class="custom-control-input" id="dinner_{{food.id}}" value="1">
+                                              <label class="custom-control-label" for="dinner_{{food.id}}">⼣⾷</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </fieldset>
+                        <footer style="float: right">
+                            <button type="button" class="btn btn-success" data-dismiss="modal">キャンセル</button>
+                        </footer>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sleep_creater" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md" role="document" style="z-index: 1050;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">睡眠習慣登録</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="clearfix margin-bottom-10">
+                    <form id="sleep_reg_form" accept-charset="UTF-8" class="sky-form" action=""
+                          method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value=""/>
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="form-group fg-float ">
+                                        <label class="fg-label">就寝時間</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-9">
+                                    <div class="form-group fg-float ">
+                                        <div class="fg-line input-append date">
+                                            <input type="text" name="bed_time" id="bed_time" data-format="YYYY-MM-DD HH:mm" data-template="YYYY年MM月DD日 HH:mm" value="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="form-group fg-float ">
+                                        <label class="fg-label">起床時間</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-9">
+                                    <div class="form-group fg-float ">
+                                        <div class="fg-line input-append date">
+                                            <input type="text" name="wakeup_time" id="wakeup_time" data-format="YYYY-MM-DD HH:mm" data-template="YYYY年MM月DD日 HH:mm" value="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="form-group fg-float ">
+                                        <label class="fg-label">睡眠時間</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-9">
+                                    <div class="form-group fg-float ">
+                                        <div class="fg-line input-append date">
+                                            <input class="form-control" type="text" name="sleep_time" id="sleep_time" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% for sq in sq_list %}
+                            <input type="hidden" name="sleep_info_id[{{sq.id}}]" id="sleep_info_id_{{sq.id}}" value=""/>
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <div class="form-group fg-float ">
+                                        <label class="fg-label">{{ sq.name }}</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-7">
+                                    <div class="form-group fg-float ">
+                                        <div class="custom-control custom-checkbox">
+                                              <input name="level[{{sq.id}}]" type="radio" class="custom-control-input" id="level0_{{sq.id}}" value="0">
+                                              <label class="custom-control-label" for="level0_{{sq.id}}">{{sq.level0}}</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                              <input name="level[{{sq.id}}]" type="radio" class="custom-control-input" id="level1_{{sq.id}}" value="1">
+                                              <label class="custom-control-label" for="level1_{{sq.id}}">{{sq.level1}}</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                              <input name="level[{{sq.id}}]" type="radio" class="custom-control-input" id="level2_{{sq.id}}" value="2">
+                                              <label class="custom-control-label" for="level2_{{sq.id}}">{{sq.level2}}</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox">
+                                              <input name="level[{{sq.id}}]" type="radio" class="custom-control-input" id="level3_{{sq.id}}" value="3">
+                                              <label class="custom-control-label" for="level3_{{sq.id}}">{{sq.level3}}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </fieldset>
+                        <footer style="float: right">
+                            <button type="button" class="btn btn-success" data-dismiss="modal">キャンセル</button>
+                        </footer>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}
+
+{% block js %}
+<script>
+    $(document).ready(function () {
+        $('#reg_date').combodate({
+            minYear: 2015,
+            maxYear: 2030,
+            smartDays:true,
+            firstItem:'none'
+        });
+        $("#bed_time").combodate({
+            minYear: 2015,
+            maxYear: 2030,
+            smartDays:true,
+            minuteStep: 1,
+            firstItem:'none'
+        });
+        $("#wakeup_time").combodate({
+            minYear: 2015,
+            maxYear: 2030,
+            smartDays:true,
+            minuteStep: 1,
+            firstItem:'none'
+        });
+        function DtRender_editMeal_function(data, type, full, meta)
+        {
+            var html =
+                '<button name="editUser" data-id="' + full.id +
+                '" style="padding: 5px 10px 5px 10px;" class="btn btn-info" onclick="DtRender_bt_editMeal(' + full.id + ', \'' +  full.reg_date +
+                '\');"><i class="fa fa-eye"></i></button>';
+
+            return html;
+        }
+
+        function DtRender_created_function(data, type, full, meta){
+            return utc2local(data);
+        }
+
+        $('#mealTable').dataTable({
+            scrollX:true,
+            processing: true,
+            serverSide: true,
+            pageLength: 10,
+            language: {
+                "sProcessing": "処理中...",
+                "sSearch": "検索キー",
+                "sLengthMenu": "顕示 &nbsp; _MENU_ &nbsp;項",
+                "sZeroRecords": "検索結果がありません。",
+                "sInfo": "顕示 _START_ から _END_ 項結果，総て _TOTAL_ 項",
+                "sInfoEmpty": "顕示 0から 0項結果，総て 0項')",
+                "sEmptyTable": "検索結果がありません。",
+                "sLoadingRecords": "ローディング中...",
+                "paginate": {
+                    "previous": "以前",
+                    "next": "以後"
+                }
+            },
+            ajax: {
+                "url": "{% url 'health.meal_get_list' %}",
+                "type": "POST",
+                data: function ( d ) {
+                        $.extend(d, { user_id : {{user_id}}});
+                    }
+            },
+            columns: [
+                {name: "number", data: "number", defaultContent: "", className: "dt-center", orderable: false},
+                {
+                    name: "reg_date",
+                    data: "reg_date",
+                    defaultContent: "",
+                    className: "dt-center",
+                    orderable: true,
+                    searchable: true,
+                },
+                {
+                    name: "created_at",
+                    data: "created_at",
+                    defaultContent: "",
+                    className: "dt-center",
+                    orderable: true,
+                    searchable: false,
+                    render: DtRender_created_function
+                },
+                {
+                    name: "id",
+                    data: "id",
+                    defaultContent: "",
+                    className: "dt-center",
+                    orderable: false,
+                    render: DtRender_editMeal_function
+                }
+            ],
+            order: [[1, 'desc']]
+        });
+
+        $.fn.dataTable.ext.errMode = 'none';
+
+
+
+        function DtRender_bt_meal(id,
+                                  reg_date,
+                                  meal_info_list
+                                  ) {
+            var $form = $("form#meal_reg_form"),
+                path_action = $form.attr("action");
+
+            $form.find('em').remove();
+            $('.state-error').removeClass("state-error");
+            $('.state-success').removeClass("state-success");
+            $('.invalid').removeClass("invalid");
+            $('.valid').removeClass("valid");
+
+            $("form#meal_reg_form input[type=checkbox]").prop('checked', false);
+            if (meal_info_list) {
+                for (var i = 0; i < meal_info_list.length; i++) {
+                    var meal_info = meal_info_list[i];
+                    $("input#meal_info_id_" + meal_info.food_data_id).val(meal_info.id);
+                    if (meal_info.breakfast)
+                        $("input#breakfast_" + meal_info.food_data_id).prop('checked', true);
+                    if (meal_info.lunch)
+                        $("input#lunch_" + meal_info.food_data_id).prop('checked', true);
+                    if (meal_info.dinner)
+                        $("input#dinner_" + meal_info.food_data_id).prop('checked', true);
+                }
+            }
+
+            if (id !== undefined) {
+                $form.attr("action", path_action.replace("create", "update"));
+                $("#meal_creater").find(".modal-title").html('⾷事習慣情報変更');
+                $("#meal_reg_form input[name=id]").val(id);
+            } else {
+                $form.attr("action", path_action.replace("update", "create"));
+                $("#meal_creater").find(".modal-title").html('⾷事習慣登録');
+                $("#meal_reg_form input[name=id]").val('');
+            }
+
+            if (!reg_date) {
+                reg_date = moment().format("YYYY-MM-DD");
+            }
+
+             $("input#reg_date").combodate('setValue', reg_date);
+        }
+
+        DtRender_bt_editMeal = function (id, reg_date) {
+            var success = function (data) {
+                    DtRender_bt_meal(
+                        id,
+                        reg_date,
+                        data
+                    );
+                    $('#meal_creater').modal({backdrop: 'static', keyboard: false});
+                    $("#meal_creater").modal('show');
+                },
+                error = function (data) {
+                    new PNotify({
+                        title: "エラー!",
+                        text: error_msg(data),
+                        delay: 3000,
+                        type: 'error'
+                    });
+                };
+            ajax_json(
+                "POST",
+                "{% url 'health.meal_get_info' %}",
+                {
+                     id: id
+                },
+                success,
+                error,
+                true
+            );
+        };
+
+        function DtRender_editSleep_function(data, type, full, meta)
+        {
+            var html =
+                '<button data-id="' + full.id +
+                '" style="padding: 5px 10px 5px 10px;" class="btn btn-info" onclick="DtRender_bt_editSleep(' + full.id + ', \'' +  full.bed_time + '\', \'' +  full.wakeup_time +
+                '\');"><i class="fa fa-eye"></i></button>';
+
+            return html;
+        }
+
+        $('#sleepTable').dataTable({
+            scrollX:true,
+            processing: true,
+            serverSide: true,
+            pageLength: 10,
+            language: {
+                "sProcessing": "処理中...",
+                "sSearch": "検索キー",
+                "sLengthMenu": "顕示 &nbsp; _MENU_ &nbsp;項",
+                "sZeroRecords": "検索結果がありません。",
+                "sInfo": "顕示 _START_ から _END_ 項結果，総て _TOTAL_ 項",
+                "sInfoEmpty": "顕示 0から 0項結果，総て 0項')",
+                "sEmptyTable": "検索結果がありません。",
+                "sLoadingRecords": "ローディング中...",
+                "paginate": {
+                    "previous": "以前",
+                    "next": "以後"
+                }
+            },
+            ajax: {
+                "url": "{% url 'health.sleep_get_list' %}",
+                "type": "POST",
+                data: function ( d ) {
+                        $.extend(d, { user_id : {{user_id}}});
+                    }
+            },
+            columns: [
+                {name: "number", data: "number", defaultContent: "", className: "dt-center", orderable: false},
+                {
+                    name: "bed_time",
+                    data: "bed_time",
+                    defaultContent: "",
+                    className: "dt-center",
+                    orderable: true,
+                    searchable: true,
+                    render: DtRender_created_function
+                },
+                {
+                    name: "wakeup_time",
+                    data: "wakeup_time",
+                    defaultContent: "",
+                    className: "dt-center",
+                    orderable: true,
+                    searchable: true,
+                    render: DtRender_created_function
+                },
+                {
+                    name: "sleep_time",
+                    data: "sleep_time",
+                    defaultContent: "",
+                    className: "dt-center",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    name: "created_at",
+                    data: "created_at",
+                    defaultContent: "",
+                    className: "dt-center",
+                    orderable: true,
+                    searchable: false,
+                    render: DtRender_created_function
+                },
+                {
+                    name: "id",
+                    data: "id",
+                    defaultContent: "",
+                    className: "dt-center",
+                    orderable: false,
+                    render: DtRender_editSleep_function
+                }
+            ],
+            order: [[1, 'desc']]
+        });
+
+        function DtRender_bt_sleep(id,
+                                  bed_time,
+                                  wakeup_time,
+                                  sleep_info_list
+                                  ) {
+            var $form = $("form#sleep_reg_form"),
+                path_action = $form.attr("action");
+
+            $form.find('em').remove();
+            $('.state-error').removeClass("state-error");
+            $('.state-success').removeClass("state-success");
+            $('.invalid').removeClass("invalid");
+            $('.valid').removeClass("valid");
+
+            $("form#sleep_reg_form input[type=radio]").prop('checked', false);
+            if (sleep_info_list) {
+                for (var i = 0; i < sleep_info_list.length; i++) {
+                    var sleep_info = sleep_info_list[i];
+                    $("input#sleep_info_id_" + sleep_info.sq_id).val(sleep_info.id);
+                    $("input#level" + sleep_info.level + "_" + sleep_info.sq_id).prop('checked', true);
+                }
+            }
+
+            if (id !== undefined) {
+                $form.attr("action", path_action.replace("create", "update"));
+                $("#sleep_creater").find(".modal-title").html('睡眠習慣情報変更');
+                $("#sleep_reg_form input[name=id]").val(id);
+            } else {
+                $form.attr("action", path_action.replace("update", "create"));
+                $("#sleep_creater").find(".modal-title").html('睡眠習慣登録');
+                $("#sleep_reg_form input[name=id]").val('');
+            }
+
+            if (!bed_time) {
+                bed_time = moment().format("YYYY-MM-DD HH:mm");
+            }else{
+                bed_time = moment(bed_time).format("YYYY-MM-DD HH:mm");
+            }
+
+            if (!wakeup_time) {
+                wakeup_time = moment().format("YYYY-MM-DD HH:mm");
+            }else{
+                wakeup_time = moment(wakeup_time).format("YYYY-MM-DD HH:mm");
+            }
+
+            var ms =moment(wakeup_time).diff(moment(bed_time));
+            var d = moment.duration(ms);
+            var sleep_time = Math.floor(d.asHours()) + moment.utc(ms).format("時間mm分");
+            $("input#bed_time").combodate('setValue', bed_time);
+            $("input#wakeup_time").combodate('setValue', wakeup_time);
+            $("input#sleep_time").val(sleep_time);
+        }
+        $('input#bed_time').on('change', function() {
+            var ms = moment($('input#wakeup_time').val()).diff($(this).val());
+            var d = moment.duration(ms);
+            var sleep_time = Math.floor(d.asHours()) + moment.utc(ms).format("時間mm分");
+
+            $("input#sleep_time").val(sleep_time);
+        });
+        $('input#wakeup_time').on('change', function() {
+            var ms = moment($(this).val()).diff(moment($('input#bed_time').val()));
+            var d = moment.duration(ms);
+            var sleep_time = Math.floor(d.asHours()) + moment.utc(ms).format("時間mm分");
+            $("input#sleep_time").val(sleep_time);
+        });
+        DtRender_bt_editSleep = function (id, bed_time, wakeup_time) {
+            var success = function (data) {
+                    DtRender_bt_sleep(
+                        id,
+                        bed_time,
+                        wakeup_time,
+                        data
+                    );
+                    $('#sleep_creater').modal({backdrop: 'static', keyboard: false});
+                    $("#sleep_creater").modal('show');
+                },
+                error = function (data) {
+                    new PNotify({
+                        title: "エラー!",
+                        text: error_msg(data),
+                        delay: 3000,
+                        type: 'error'
+                    });
+                };
+            ajax_json(
+                "POST",
+                "{% url 'health.sleep_get_info' %}",
+                {
+                     id: id
+                },
+                success,
+                error,
+                true
+            );
+        };
+    });
+</script>
+{% endblock %}

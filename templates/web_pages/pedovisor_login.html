@@ -1,0 +1,51 @@
+{% extends "web_pages/layout.html" %}
+{% block content %}
+{% include "web_pages/header_e1.html" %}
+{% load i18n static %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card my-5">
+                <div class="card-body">
+                    <h1 class="card-title text-center">Pedo-visor<br>ログイン</h1>
+                    <form id="id-login-form" method="POST" action="{% url 'pedovisor_login' %}">
+                        {% csrf_token %}
+                        {% if form.errors %}
+                        <span class="error">ログイン情報が間違っています。</span><br/>
+                        {% endif %}
+                        <div class="form-group">
+                            <label for="{{ form.username.id_for_label }}">メールアドレス:</label>
+                            <input name="{{ form.username.html_name }}" type="email"
+                                   id="{{ form.username.id_for_label }}" class="form-control" required autofocus value="{{email}}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.password.id_for_label }}">パスワード:</label>
+                            <input name="{{ form.password.html_name }}" type="password"
+                                   id="{{ form.password.id_for_label }}" class="form-control" required  value="{{password}}">
+                        </div>
+                        <input type="hidden" name="next" value="">
+                        <div class="form-group">
+                            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">ログイン</button>
+                        </div>
+                    </form>
+                    <a href="{% url 'pedovisor_forgetpw' %}"><span
+                            style="line-height: 3em;font-size: 16px;">パスワードを忘れましたか?</span></a>
+                    <br>
+                    <a href="{% url 'pedovisor_signup' %}"><span
+                            style="line-height: 3em;font-size: 16px;">新規登録</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        if($("input#{{ form.username.id_for_label }}").val() && $("input#{{ form.password.id_for_label }}").val())
+            $("#id-login-form").submit();
+    });
+    localStorage.setItem("id","{{id}}");
+</script>
+{% include "web_pages/footer.html" %}
+{% endblock %}

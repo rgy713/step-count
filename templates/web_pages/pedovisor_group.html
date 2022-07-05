@@ -1,0 +1,39 @@
+{% extends "web_pages/layout.html" %}
+{% block content %}
+{% include "web_pages/header_f1.html" %}
+{% load i18n static %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-md-8 col-lg-7 mx-auto">
+            <div class="card my-5">
+                <div class="card-body">
+                <h1 class="card-title text-center">グループ一覧</h1>
+                <div id="create_part" class="clearfix margin-bottom-10">
+                    <form id="update_form" accept-charset="UTF-8" class="sky-form"
+                          action="{% url 'pedovisor_group'%}"
+                          method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <fieldset>
+                            <div class="list-group" style="max-height: 300px;overflow: auto;">
+                                {% for group in groups%}
+                                    <input type="checkbox" name="group_ids" value="{{group.id}}" id="group_{{group.id}}" {% if group.active %}checked="true"{% endif %}/>
+                                    <label class="list-group-item" for="group_{{group.id}}">{{ group.name }}</label>
+                                {% endfor %}
+                            </div>
+                        </fieldset>
+                        <footer class="float-right">
+                            <a class="mr-3" href="{% url 'pedovisor_dashboard' %}">ダッシュボード</a>
+                            <button type="submit" class="btn btn-primary pl-5 pr-5">適用</button>
+                        </footer>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+<script>
+</script>
+{% include "web_pages/footer.html" %}
+{% endblock %}

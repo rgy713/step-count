@@ -1,0 +1,371 @@
+{% extends "admin_site/base_site.html" %}
+{% load i18n static %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i>睡眠の質管理</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item active"><a href="#">睡眠の質管理</a></li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="tile-body">
+                    <button id="btnAdd" type="button" class="btn btn-primary mb-3">
+                        <i class="fa fa-user-plus"></i> 追加
+                    </button>
+                    <table id="sqTable"
+                           class="table responsive table-hover table-bordered dataTable no-footer table-full-width" cellspacing="0"
+                           style="width:100%">
+                        <thead>
+                        <tr>
+                            <th>NO</th>
+                            <th>睡眠の質名</th>
+                            <th>レベル0名</th>
+                            <th>レベル1名</th>
+                            <th>レベル2名</th>
+                            <th>レベル3名</th>
+                            <th style="width: 90px">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="sq_creater" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md" role="document" style="z-index: 1050;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">睡眠の質登録</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div id="create_part" class="clearfix margin-bottom-10">
+                        <form id="sq_reg_form" accept-charset="UTF-8" class="sky-form" action="{% url 'health.sq.create' %}"
+                              method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="id" value=""/>
+                            <fieldset>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">睡眠の質名</label>
+                                            <div class="fg-line" id="ct_name">
+                                                <input id="name" name="name" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">レベル0名</label>
+                                            <div class="fg-line" id="ct_level0">
+                                                <input id="level0" name="level0" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">レベル1名</label>
+                                            <div class="fg-line" id="ct_level1">
+                                                <input id="level1" name="level1" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">レベル2名</label>
+                                            <div class="fg-line" id="ct_level2">
+                                                <input id="level2" name="level2" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">レベル3名</label>
+                                            <div class="fg-line" id="ct_level3">
+                                                <input id="level3" name="level3" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <footer style="float: right">
+                                <button type="button" class="btn btn-success" data-dismiss="modal">キャンセル</button>
+                                <button type="submit" id="info_update" class="btn btn-primary">登録</button>
+                            </footer>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+
+        function DtRender_sq_function(data, type, full, meta)
+        {
+            html =
+                '<button name="editSq" data-id="' + full.id +
+                '" style="padding: 5px 10px 5px 10px;" class="btn btn-info" onclick="DtRender_bt_editsq(' + full.id +
+                ');"><i class="fa fa-edit"></i></button>&nbsp;&nbsp;&nbsp;' +
+                '<button name="delSq" data-id="' + full.id +
+                '" style="padding: 5px 10px 5px 10px;" class="btn btn-danger" onclick="DtRender_bt_delsq(' + full.id +
+                ');"><i class="fa fa-trash"></i></button>';
+
+            return html;
+        }
+
+        function DtRender_bt_sq(id,name,level0,level1,level2,level3)
+        {
+            if (name === undefined) name = "";
+
+            var $form = $("form#sq_reg_form"),
+                path_action = $form.attr("action");
+
+            $form.find('em').remove();
+            $('.state-error').removeClass("state-error");
+            $('.state-success').removeClass("state-success");
+            $('.invalid').removeClass("invalid");
+            $('.valid').removeClass("valid");
+
+            if (id !== undefined) {
+                $form.attr("action", path_action.replace("create", "update"));
+                $("#sq_creater").find(".modal-title").html('睡眠の質情報変更');
+                $("[name=id]").val(id);
+            } else {
+                $form.attr("action", path_action.replace("update", "create"));
+                $("#sq_creater").find(".modal-title").html('睡眠の質登録');
+                $("[name=id]").val('');
+            }
+
+            $("#name").val(name);
+            $("#level0").val(level0);
+            $("#level1").val(level1);
+            $("#level2").val(level2);
+            $("#level3").val(level3);
+        }
+
+        $(document).ready(function () {
+
+            $('#sqTable').dataTable({
+                "scrollX": true,
+                processing: true,
+                serverSide: true,
+                pageLength: 10,
+                language: {
+                    "sProcessing": "処理中...",
+                    "sSearch": "検索キー",
+                    "sLengthMenu": "顕示 &nbsp; _MENU_ &nbsp;項",
+                    "sZeroRecords": "検索結果がありません。",
+                    "sInfo": "顕示 _START_ から _END_ 項結果，総て _TOTAL_ 項",
+                    "sInfoEmpty": "顕示 0から 0項結果，総て 0項')",
+                    "sEmptyTable": "検索結果がありません。",
+                    "sLoadingRecords": "ローディング中...",
+                    "paginate": {
+                        "previous": "以前",
+                        "next": "以後"
+                    }
+                },
+                ajax: {
+                    "url": "{% url 'health.sq.get_list' %}",
+                    "type": "POST"
+                },
+                columns: [
+                    {name: "number", data: "number", defaultContent: "", className: "dt-center", orderable: false},
+                    {name: "name", data: "name", defaultContent: "", className: "dt-center"},
+                    {name: "level0", data: "level0", defaultContent: "", className: "dt-center"},
+                    {name: "level1", data: "level1", defaultContent: "", className: "dt-center"},
+                    {name: "level2", data: "level2", defaultContent: "", className: "dt-center"},
+                    {name: "level3", data: "level3", defaultContent: "", className: "dt-center"},
+                    {
+                        name: "id",
+                        data: "id",
+                        defaultContent: "",
+                        className: "dt-center",
+                        orderable: false,
+                        render: DtRender_sq_function
+                    }
+                ],
+                order: [[6, 'asc']]
+            });
+
+            DtRender_bt_editsq = function (id) {
+                var success = function (data) {
+                        DtRender_bt_sq(
+                            data.id,
+                            data.name,
+                            data.level0,
+                            data.level1,
+                            data.level2,
+                            data.level3
+                        );
+                        $('#sq_creater').modal({backdrop: 'static', keyboard: false});
+                        $("#sq_creater").modal('show');
+                    },
+                    error = function (data) {
+                        new PNotify({
+                            title: "エラー!",
+                            text: error_msg(data),
+                            delay: 3000,
+                            type: 'error'
+                        });
+                    };
+                ajax_json(
+                    "POST",
+                    "{% url 'health.sq.get_info' %}",
+                    {
+                         id: id
+                    },
+                    success,
+                    error,
+                    true
+                );
+            };
+
+            DtRender_bt_delsq = function (id) {
+                swal({
+                    title: "本当に削除するだろうか!",
+                    text: "睡眠の質はデータベースから削除されます。",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "はい",
+                    cancelButtonText: "いいえ",
+                    closeOnConfirm: false
+                }, function () {
+                    var success = function (data) {
+                            swal.close();
+                            $('#sqTable').DataTable().ajax.reload();
+                        },
+                        error = function (data) {
+                            swal.close();
+                            new PNotify({
+                                title: "エラー!",
+                                text: error_msg(data),
+                                delay: 3000,
+                                type: 'error'
+                            });
+                        };
+                    ajax_json(
+                        "POST",
+                        "{% url 'health.sq.delete' %}",
+                        {
+                             id: id
+                        },
+                        success,
+                        error,
+                        true
+                    );
+                });
+            };
+
+            $("#btnAdd").on("click", function () {
+                DtRender_bt_sq();
+                $('#sq_creater').modal({backdrop: 'static', keyboard: false});
+                $("#sq_creater").modal('show');
+            });
+
+            // Validation for login form
+            $("#sq_reg_form").validate({
+                // Rules for form validation
+                rules: {
+                    name: {
+                        required: true
+                    },
+                    level0: {
+                        required: true
+                    },
+                    level1: {
+                        required: true
+                    },
+                    level2: {
+                        required: true
+                    },
+                    level3: {
+                        required: true
+                    }
+                },
+
+                // Messages for form validation
+                messages: {
+                    name: {
+                        required: '睡眠の質名を入力してください。'
+                    },
+                    level0: {
+                        required: 'レベル0名を入力してください。'
+                    },
+                    level1: {
+                        required: 'レベル1名を入力してください。'
+                    },
+                    level2: {
+                        required: 'レベル2名を入力してください。'
+                    },
+                    level3: {
+                        required: 'レベル3名を入力してください。'
+                    }
+                },
+
+                // Do not change code below
+                errorPlacement: function (error, element) {
+                    if ($(element).attr("name") == "name") {
+                        error.insertAfter(element.parent());
+                    } else {
+                        $(element).parent().parent().addClass("state-error");
+                        $(error).insertAfter(element.parent().parent());
+                    }
+                },
+
+                submitHandler: function (form) {
+                    var action = $("form#sq_reg_form").attr("action");
+                    var fd = new FormData($("form#sq_reg_form")[0]);
+                    var success = function (data) {
+                            $('#sqTable').DataTable().ajax.reload();
+                            $("#sq_creater").modal('hide');
+                        },
+                        error = function (data) {
+                            new PNotify({
+                                title: "エラー!",
+                                text: error_msg(data),
+                                delay: 3000,
+                                type: 'error'
+                            });
+                        };
+                    ajax_form(
+                        "POST",
+                        action,
+                        fd,
+                        success,
+                        error
+                    );
+                }
+            });
+        });
+
+    </script>
+{% endblock %}

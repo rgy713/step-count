@@ -1,0 +1,42 @@
+{% extends "admin_site/layout.html" %}
+{% block content %}
+    <section class="login-content">
+        <div class="logo text-center">
+            <h1>みんなの健康習慣<br>管理サイト ログイン</h1>
+        </div>
+        <div class="login-box">
+            <form class="login-form" method="POST" action="{% url 'adminLogin' %}">
+                {% csrf_token %}
+                <h3 class="login-head"><i class="fa fa-lg fa-fw fa-user"></i>管理者ログイン</h3>
+                <div class="form-group">
+                    <label class="control-label">メールアドレス</label>
+                    <input id="uid" type="text"
+                           class="form-control{% if form.errors %} is-invalid{% endif %}"
+                           name="{{ form.username.html_name }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">パスワード</label>
+                    <input id="password" type="password"
+                           class="form-control{% if form.errors %} is-invalid{% endif %}"
+                           name="{{ form.password.html_name }}" required>
+                </div>
+                <div class="form-group">
+                    <div class="utility">
+                        <a href="{% url 'admin.forgetpw' %}">
+                            <span>パスワードを忘れましたか?</span>
+                        </a>
+                    </div>
+                </div>
+                {% if form.errors %}
+                    <span style="color:red;font-size: 80%;" role="alert">
+                        <strong>ログイン情報が間違っています。</strong>
+                    </span>
+                {% endif %}
+                <div class="form-group btn-container">
+                    <button class="btn btn-primary btn-block"><i class="fa fa-sign-in fa-lg fa-fw"></i>ログイン</button>
+                </div>
+                <input type="hidden" name="next" value="">
+            </form>
+        </div>
+    </section>
+{% endblock %}

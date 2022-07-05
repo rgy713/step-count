@@ -1,0 +1,20 @@
+{% load i18n static %}
+<header class="main-header">
+    <div class="logo_part">
+        <a href="{% url 'pedovisor_dashboard'%}" class="logo_txt white_font_color"><img src="{% static 'assets/images/web-logo.png' %}" height="90%">Pedo-visor</a>
+    </div>
+    <div class="head_menu_part">
+        <a onclick="view_head_menu();" class="mobile_head" style="height: 80px;"><img src="{% static 'assets/images/menu.png' %}" width="80"
+                                                          style="float: left;" alt="menu"/></a>
+        <ul>
+            <li><a href="{% url 'pedovisor_user'%}">User</a></li>
+            <li><a href="{% url 'pedovisor_logout'%}">Log Out</a></li>
+        </ul>
+    </div>
+</header>
+<div class="head_menu_extend">
+    <ul>
+        <li><a class="white_font_color text-center" style="padding-left: 8px;" href="{% url 'pedovisor_user'%}">User</a></li>
+        <li><a class="white_font_color text-center" href="{% url 'pedovisor_logout'%}">Log Out</a></li>
+    </ul>
+</div>

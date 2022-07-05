@@ -1,0 +1,121 @@
+{% extends "web_pages/layout.html" %}
+{% block content %}
+{% include "web_pages/header_f1.html" %}
+{% load i18n static %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-md-8 col-lg-7 mx-auto">
+            <div class="card my-5">
+                <div class="card-body">
+                    <h1 class="card-title text-center">パスワード再登録</h1>
+                    {% if error %}
+                    <p style="color:red;">{{error}}</p>
+                    {% endif %}
+                    <div id="create_part" class="clearfix margin-bottom-10">
+                        <form id="change_form" accept-charset="UTF-8" class="sky-form"
+                              action="{% url 'pedovisor_changepw' %}"
+                              method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <fieldset>
+                                <div class="row" id="pass0">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">パスワード</label>
+                                            <div class="fg-line" id="ct_pass0">
+                                                <input id="cur_password" name="cur_password" type="password"
+                                                       class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="pass1">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">newパスワード</label>
+                                            <div class="fg-line" id="ct_pass">
+                                                <input id="new_password" name="new_password" type="password"
+                                                       class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="pass2">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">newパスワード確認</label>
+                                            <div class="fg-line" id="ct_passcf">
+                                                <input id="new_passwordcf" name="new_passwordcf" type="password"
+                                                       class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <footer class="float-right">
+                                <a class="mr-3" href="{% url 'pedovisor_login' %}">ログインウィンドウで</a>
+                                <button type="submit" id="info_update" class="btn btn-primary pl-5 pr-5">適用</button>
+                            </footer>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $("#change_form").validate({
+            // Rules for form validation
+            rules: {
+                cur_password: {
+                    required: true,
+                    minlength: 3
+                },
+                new_password: {
+                    required: true,
+                    minlength: 3
+                },
+                new_passwordcf: {
+                    required: true,
+                    minlength: 3,
+                    equalTo: "#new_password"
+                },
+            },
+
+            // Messages for form validation
+            messages: {
+                cur_password: {
+                    required: 'メールアドレスを入力してください。',
+                    minlength: 'パスワードを8席以上に設定してください。'
+                },
+                new_password: {
+                    required: 'パスワードを入力してください。',
+                    minlength: 'パスワードを8席以上に設定してください。'
+                },
+                new_passwordcf: {
+                    required: 'パスワードを入力しなおしてください。',
+                    minlength: 'パスワードを8席以上に設定してください。',
+                    equalTo: 'パスワードと一致しません。'
+                },
+            },
+
+            // Do not change code below
+            errorPlacement: function (error, element) {
+                if ($(element).attr("name") == "cur_password") {
+                    error.insertAfter(element.parent());
+                } else if ($(element).attr("name") == "new_password") {
+                    error.insertAfter(element.parent());
+                } else if ($(element).attr("name") == "new_passwordcf") {
+                    error.insertAfter(element.parent());
+                } else {
+                    $(element).parent().parent().addClass("state-error");
+                    $(error).insertAfter(element.parent().parent());
+                }
+            }
+        });
+    });
+</script>
+{% include "web_pages/footer.html" %}
+{% endblock %}

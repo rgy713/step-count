@@ -1,0 +1,29 @@
+{% extends "web_pages/layout.html" %}
+{% block content %}
+{% include "web_pages/header_e1.html" %}
+{% load i18n static %}
+<section
+        style="background-color: #f3ffa8; width: 100%; height: 300px;font-size: 30px;text-align: center;line-height: 300px;">
+    Main
+</section>
+<section style="background-color: #82fffa; width: 100%; height: 300px;">
+    Content1
+</section>
+<section style="width: 100%; height: 300px; display: flex;">
+
+    <div style="background-color: #cea0ff; width: 50%; height: 300px;">
+        <a href="{% url 'pedovisor_dashboard'%}">
+            Content2
+        </a>
+    </div>
+
+
+    <div style="background-color: #ffb7ba; width: 50%; height: 300px;">
+        <a href="http://dependa.co.jp/introduction">
+            Content3
+        </a>
+    </div>
+
+</section>
+{% include "web_pages/footer.html" %}
+{% endblock %}

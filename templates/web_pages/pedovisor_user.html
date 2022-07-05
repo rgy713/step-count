@@ -1,0 +1,212 @@
+{% extends "web_pages/layout.html" %}
+{% block content %}
+{% include "web_pages/header_f1.html" %}
+{% load i18n static %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-md-8 col-lg-7 mx-auto">
+            <div class="card my-5">
+                <div class="card-body">
+                <h1 class="card-title text-center">ユーザー</h1>
+                <div id="create_part" class="clearfix margin-bottom-10">
+                    <form id="user_reg_form" accept-charset="UTF-8" class="sky-form"
+                          action="{% url 'pedovisor_user'%}"
+                          method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group fg-float ">
+                                        <label class="fg-label">メールアドレス</label>
+                                        <div class="fg-line" id="ct_email">
+                                            <input id="email" name="email" type="email" class="form-control" value="{{user.email}}" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group fg-float ">
+                                        <label class="fg-label">名前</label>
+                                        <div class="fg-line" id="ct_name">
+                                            <input id="name" name="name" type="text" class="form-control" value="{{user.name}}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group fg-float ">
+                                        <label class="fg-label">性別</label>
+                                        <label class="input">
+                                            <select class="form-control" id="gender" name="gender"
+                                                    style="height:34px;">
+                                                <option value="0" {% if user.gender == 0%}selected{% endif %}>男</option>
+                                                <option value="1" {% if user.gender == 1%}selected{% endif %}>女</option>
+                                                <option value="2" {% if user.gender == 2%}selected{% endif %}>その他</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group fg-float ">
+                                        <label class="fg-label">生年月日</label>
+                                        <div class="fg-line input-append date" id="ct_birth">
+                                            <input type="text" name="birthday" id="birthday" class="form-control" value="{{user.birthday}}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group fg-float ">
+                                        <label class="fg-label">身長</label>
+                                        <div class="fg-line" id="ct_height">
+                                            <input id="height" name="height" type="text" class="form-control" value="{{user.height}}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group fg-float ">
+                                        <label class="fg-label">体重</label>
+                                        <div class="fg-line" id="ct_weight">
+                                            <input id="weight" name="weight" type="text" class="form-control" value="{{user.weight}}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group fg-float ">
+                                        <label class="fg-label">運動習慣</label>
+                                        <label class="input">
+                                            <select class="form-control" id="habbit" name="habbit"
+                                                    style="height:34px;">
+                                                <option value="0" {% if user.habbit == 0 %}selected{% endif %}>軽く汗ばむ程度の運動習慣はない</option>
+                                                <option value="1" {% if user.habbit == 1 %}selected{% endif %}>月に2～3回は運動する</option>
+                                                <option value="2" {% if user.habbit == 2 %}selected{% endif %}>週に1回は運動する</option>
+                                                <option value="3" {% if user.habbit == 3 %}selected{% endif %}>週に2回以上は運動する</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group fg-float ">
+                                        <label class="fg-label">歩幅</label>
+                                        <label class="input">
+                                            <select class="form-control" id="step_size" name="step_size"
+                                                    style="height:34px;">
+                                                <option value="0" {% if user.step_size == 0 %}selected{% endif %}>関節痛等の問題があり歩幅を伸ばしにくい</option>
+                                                <option value="1" {% if user.step_size == 1 %}selected{% endif %}>じっくりと歩幅伸長に取り組みたい</option>
+                                                <option value="2" {% if user.step_size == 2 %}selected{% endif %}>すでに歩幅には自信があり維持したい</option>
+                                                <option value="3" {% if user.step_size == 3 %}selected{% endif %}>積極的に歩幅伸長に取り組みたい</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group fg-float ">
+                                        <a href="{% url 'pedovisor_changepw' %}" style="font-weight: bold">パスワードの変更 <i class="fa fa-angle-right"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group fg-float ">
+                                        <a href="{% url 'pedovisor_group' %}" style="font-weight: bold">グループ変更 <i class="fa fa-angle-right"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <footer class="float-right">
+                            <a class="mr-3" href="{% url 'pedovisor_dashboard' %}">ダッシュボード</a>
+                            <button type="submit" id="info_update" class="btn btn-primary pl-5 pr-5">適用</button>
+                        </footer>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $("#birthday").datepicker({
+                format: 'yyyy-mm-dd',
+                prevText: '<i class="fa fa-angle-left"></i>',
+                nextText: '<i class="fa fa-angle-right"></i>'
+            });
+
+        $("#user_reg_form").validate({
+            // Rules for form validation
+            rules: {
+                email: {
+                    required: true,
+                    email: true
+                },
+                name: {
+                    required: true
+                },
+                birthday: {
+                    required: true
+                },
+                height: {
+                    required: true,
+                    number: true
+                },
+                weight: {
+                    required: true,
+                    number: true
+                }
+            },
+
+            // Messages for form validation
+            messages: {
+                email: {
+                    required: 'メールアドレスを入力してください。',
+                    email: 'メールアドレスを正確に入力してください。'
+                },
+                name: {
+                    required: 'ユーザの実名を入力してください。'
+                },
+                birthday: {
+                    required: '生年月日を入力してください。'
+                },
+                height: {
+                    required: '身長を入力してください。',
+                    number: '数字を入力してください。'
+                },
+                weight: {
+                    required: '体重を入力してください。',
+                    number: '数字を入力してください。'
+                }
+            },
+
+            // Do not change code below
+            errorPlacement: function (error, element) {
+                if ($(element).attr("name") == "email") {
+                    error.insertAfter(element.parent());
+                } else if ($(element).attr("name") == "name") {
+                    error.insertAfter(element.parent());
+                } else if ($(element).attr("name") == "birthday") {
+                    error.insertAfter(element.parent());
+                } else if ($(element).attr("name") == "height") {
+                    error.insertAfter(element.parent());
+                } else if ($(element).attr("name") == "weight") {
+                    error.insertAfter(element.parent());
+                } else {
+                    $(element).parent().parent().addClass("state-error");
+                    $(error).insertAfter(element.parent().parent());
+                }
+            }
+        });
+    });
+</script>
+{% include "web_pages/footer.html" %}
+{% endblock %}

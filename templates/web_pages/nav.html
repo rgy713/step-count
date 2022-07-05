@@ -1,0 +1,36 @@
+<nav class="nav">
+  <div class="burger">
+    <div class="burger__patty"></div>
+  </div>
+
+  <ul class="nav__list">
+    <li class="nav__item">
+      <a href="{% url 'pedovisor_activity' %}" class="nav__link c-white"><i class="fa fa-edit"></i></a>
+    </li>
+    <li class="nav__item">
+      <a href="{% url 'pedovisor_calendar' %}" class="nav__link c-yellow scrolly"><i class="fa fa-calendar"></i></a>
+    </li>
+    <li class="nav__item">
+      <a href="{% url 'pedovisor.health' %}" class="nav__link c-red"><i class="fa fa-heart"></i></a>
+    </li>
+    <li class="nav__item">
+      <a href="#4" class="nav__link c-green"><i class="fa fa-print"></i></a>
+    </li>
+  </ul>
+</nav>
+<script>
+    var menu = document.querySelector('.nav__list');
+    var burger = document.querySelector('.burger');
+    var doc = $(document);
+    var vh = $(window).height();
+
+    var openMenu = function openMenu() {
+        burger.classList.toggle('burger--active');
+        menu.classList.toggle('nav__list--active');
+    };
+
+    var init = function init() {
+        burger.addEventListener('click', openMenu, false);
+    };
+    doc.on('ready', init);
+</script>

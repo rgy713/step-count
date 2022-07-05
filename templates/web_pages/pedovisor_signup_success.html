@@ -1,0 +1,10 @@
+{% extends "web_pages/layout.html" %}
+{% block content %}
+{% include "web_pages/header_e1.html" %}
+{% load i18n static %}
+<section style="background-color: #FFF;">
+    <p>登録されました。</p>
+    <a href="{% url 'pedovisor_login'%}">ログインウィンドウで</a>
+</section>
+{% include "web_pages/footer.html" %}
+{% endblock %}

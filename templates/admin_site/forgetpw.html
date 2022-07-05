@@ -1,0 +1,68 @@
+{% extends "admin_site/layout.html" %}
+{% block content %}
+    <section class="login-content">
+        <div class="logo text-center">
+            <h1>パスワード再登録</h1>
+        </div>
+        <div class="login-box">
+            <form class="login-form" method="POST" action="{% url 'admin.forgetpw' %}">
+                {% csrf_token %}
+                <h3 class="login-head"><i class="fa fa-lg fa-fw fa-user"></i>パスワード再登録</h3>
+                <div class="form-group">
+                    <label class="control-label">メールアドレス</label>
+                    <input id="email" type="email"
+                           class="form-control{% if error %} is-invalid{% endif %}"
+                           name="email" required>
+                </div>
+                {% if error %}
+                    <span style="color:red;font-size: 80%;" role="alert">
+                        <strong>{{error}}</strong>
+                    </span>
+                {% endif %}
+                <div class="form-group">
+                    <div class="utility">
+                        <a class="mr-3" href="{% url 'adminLogin' %}">
+                            <span>ログインウィンドウで</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="form-group btn-container">
+                    <button class="btn btn-primary btn-block"><i class="fa fa-sign-in fa-lg fa-fw"></i>適用</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}
+{% block js %}
+    <script>
+        $(document).ready(function () {
+            $("#forget_form").validate({
+                // Rules for form validation
+                rules: {
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                },
+
+                // Messages for form validation
+                messages: {
+                    email: {
+                        required: 'メールアドレスを入力してください。',
+                        email: 'メールアドレスを正確に入力してください。'
+                    },
+                },
+
+                // Do not change code below
+                errorPlacement: function (error, element) {
+                    if ($(element).attr("name") == "email") {
+                        error.insertAfter(element.parent());
+                    } else {
+                        $(element).parent().parent().addClass("state-error");
+                        $(error).insertAfter(element.parent().parent());
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

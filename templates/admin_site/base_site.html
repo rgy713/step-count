@@ -1,0 +1,118 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}みんなの健康習慣管理サイト{% endblock %}</title>
+
+    <link rel="shortcut icon" href="/favicon.png" type="image/png">
+
+    <!-- Styles -->
+    <link href="{% static 'assets/css/app.css' %}" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'assets/plugins/pnotify/pnotify.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/plugins/pnotify/pnotify.brighttheme.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/plugins/pnotify/pnotify.buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/plugins/bootstrap-datepicker/css/datepicker.css' %}">
+
+    <!-- Font-icon css-->
+    <link rel="stylesheet" type="text/css"
+          href="{% static 'assets/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <!-- Main CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/admin_common.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/plugins/sky-forms-pro/skyforms/css/sky-forms.css' %}">
+	<link rel="stylesheet" href="{% static 'assets/plugins/sky-forms-pro/skyforms/custom/custom-sky-forms.css' %}">
+
+    {% block css %}
+
+    {% endblock %}
+</head>
+<body class="app sidebar-mini rtl">
+<!-- Navbar-->
+<header class="app-header"><a class="app-header__logo" href="{{ app.app_url }}">みんなの健康習慣</a>
+    <!-- Sidebar toggle button--><a class="app-sidebar__toggle" href="#" data-toggle="sidebar"
+                                    aria-label="Hide Sidebar"></a>
+    <!-- Navbar Right Menu-->
+    <ul class="app-nav">
+        <li class="app-search">
+            <input class="app-search__input" type="search" placeholder="Search">
+            <button class="app-search__button"><i class="fa fa-search"></i></button>
+        </li>
+        <!--Notification Menu-->
+        <li class="dropdown"><a class="app-nav__item" href="#" data-toggle="dropdown" aria-label="Show notifications"><i
+                        class="fa fa-bell-o fa-lg"></i></a>
+            {% block notification %}
+
+            {% endblock %}
+        </li>
+        <!-- User Menu-->
+        <li class="dropdown"><a class="app-nav__item" href="#" data-toggle="dropdown" aria-label="Open Profile Menu"><i
+                        class="fa fa-user fa-lg"></i></a>
+            <ul class="dropdown-menu settings-menu dropdown-menu-right">
+                <li><a class="dropdown-item" href="{% url 'admin.profile' %}"><i class="fa fa-user fa-lg"></i> Profile</a></li>
+                <li><a class="dropdown-item" href="{% url 'adminLogout' %}?next={% url 'adminLogin' %}"><i class="fa fa-sign-out fa-lg"></i> Logout</a></li>
+            </ul>
+        </li>
+    </ul>
+</header>
+<!-- Sidebar menu-->
+<div class="app-sidebar__overlay" data-toggle="sidebar"></div>
+<aside class="app-sidebar">
+    <div class="app-sidebar__user"><img class="app-sidebar__user-avatar" src="{% static 'assets/images/default-avatar.png' %}" alt="Admin Image">
+        <div>
+            <p class="app-sidebar__user-name">{{ user.username }}</p>
+            <p class="app-sidebar__user-designation">{% if user.is_superuser %}Super{% else %}Group{% endif %} Administrator</p>
+        </div>
+    </div>
+    <ul class="app-menu">
+        <!--<li><a class="app-menu__item{% if current == 'dashboard' %} active{% endif %}" href="{% url 'dashboard' %}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">ダッシュボード</span></a></li>-->
+        <li><a class="app-menu__item{% if current == 'user' %} active{% endif %}" href="{% url 'user.index' %}"><i class="app-menu__icon fa fa-pie-chart"></i><span class="app-menu__label">ユーザー一覧</span></a></li>
+        <li><a class="app-menu__item{% if current == 'score' %} active{% endif %}" href="{% url 'health.score_view' %}"><i class="app-menu__icon fa fa-pie-chart"></i><span class="app-menu__label">健康スコア合計一覧</span></a></li>
+        {% if user.is_superuser %}
+        <li><a class="app-menu__item{% if current == 'group' %} active{% endif %}" href="{% url 'group.index' %}"><i class="app-menu__icon fa fa-pie-chart"></i><span class="app-menu__label">グループ一覧</span></a></li>
+        <li class="treeview{% if current == 'food' or current == 'sq' %} is-expanded{% endif %}"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-edit"></i><span class="app-menu__label"> 健康管理サービス</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a class="treeview-item{% if current == 'food' %} active{% endif %}" href="{% url 'health.food' %}"><i class="icon fa fa-circle-o"></i> 飲食分類管理</a></li>
+            <li><a class="treeview-item{% if current == 'sq' %} active{% endif %}" href="{% url 'health.sq' %}"><i class="icon fa fa-circle-o"></i> 睡眠の質管理</a></li>
+          </ul>
+        </li>
+        {% endif %}
+    </ul>
+</aside>
+<main class="app-content">
+    {% block content %}
+
+    {% endblock %}
+</main>
+<div id="modal-loading" style="background-image: url({% static 'assets/images/loading.gif' %});"></div>
+
+<!-- Essential javascripts for application to work-->
+<script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'assets/js/popper.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'assets/js/main.js' %}"></script>
+<!-- The javascript plugin to display page loading on top-->
+<script src="{% static 'assets/js/plugins/pace.min.js' %}"></script>
+<script src="{% static 'assets/js/plugins/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/js/plugins/dataTables.bootstrap.min.js' %}"></script>
+<script src="{% static 'assets/js/plugins/sweetalert.min.js' %}"></script>
+<script src="{% static 'assets/plugins/validator/jquery.validate.min.js' %}"></script>
+<script src="{% static 'assets/plugins/pnotify/pnotify.js' %}"></script>
+<script src="{% static 'assets/plugins/pnotify/pnotify.buttons.js' %}"></script>
+<script src="{% static 'assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+<script src="{% static 'assets/plugins/sky-forms-pro/skyforms/js/jquery.form.min.js' %}"></script>
+<script src="{% static 'assets/plugins/sky-forms-pro/skyforms/js/jquery.validate.min.js' %}"></script>
+<script src="{% static 'assets/js/combodate.js' %}"></script>
+<script src="{% static 'assets/js/admin_common.js' %}"></script>
+<script src="{% static 'assets/js/moment.min.js' %}"></script>
+<script src="{% static 'assets/js/common.js' %}"></script>
+<!-- Page specific javascripts-->
+{% block js %}
+
+{% endblock %}
+</body>
+</html>

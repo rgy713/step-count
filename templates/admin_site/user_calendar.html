@@ -1,0 +1,80 @@
+{% extends "admin_site/base_site.html" %}
+{% load i18n static %}
+
+{% block css %}
+<link href="{% static 'assets/plugins/fullcalendar/fullcalendar.css'%}" rel='stylesheet' />
+<link href="{% static 'assets/plugins/fullcalendar/fullcalendar.print.css' %}" rel='stylesheet' media='print' />
+{% endblock %}
+
+{% block content %}
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i> {{username}}: カレンダー</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item"><a href="{% url 'user.dashboard' %}?user_id={{user_id}}">ダッシュボード</a></li>
+            <li class="breadcrumb-item active"><a href="{% url 'user.calendar' %}?user_id={{user_id}}">カレンダー</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'user.activity' %}?user_id={{user_id}}">アクティビティ</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="tile-body">
+                    <div id='calendar' class="col-md-12"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'assets/plugins/fullcalendar/fullcalendar.js' %}"></script>
+<script src="{% static 'assets/plugins/fullcalendar/locale-all.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $('#calendar').fullCalendar({
+            locale: 'ja',
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay,listWeek'
+            },
+            // editable: true,
+            navLinks: true, // can click day/week names to navigate views
+            eventLimit: true, // allow "more" link when too many events
+            events: function (start, end, timezone, callback) {
+                $.ajax({
+                    url: "{% url 'user.get_event_list' %}?user_id={{user_id}}",
+                    dataType: 'json',
+                    data: {
+                        start: local2utc(start),
+                        end: local2utc(end)
+                    },
+                    success: function (data) {
+                        if(data.type == 'success') {
+                            var events = [];
+                            for( var i = 0; i<data.content.length;i++){
+                                var one = data.content[i];
+                                events.push({
+                                    "title" : one.title ? one.title: "Walking",
+                                    "start" : utc2local(one.start),
+                                    // "end" : utc2local(one.end),
+                                    "url" : "{% url 'user.detail'%}" + "?data_id=" + one.id + "&user_id=" + {{user_id}}
+                                });
+                            }
+                            callback(events);
+                        }
+                    }
+                });
+            },
+            loading: function (bool) {
+                $('#loading').toggle(bool);
+            },
+            height:720
+        });
+    });
+
+</script>
+{% endblock %}

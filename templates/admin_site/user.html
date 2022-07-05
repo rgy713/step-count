@@ -1,0 +1,614 @@
+{% extends "admin_site/base_site.html" %}
+{% load i18n static %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i>ユーザー一覧</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item active"><a href="#">ユーザー一覧</a></li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div class="tile-body">
+                    <div class="row">
+                        <div class="input-group mb-3 col-md-10 col-lg-8">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">グループ</span>
+                            </div>
+                            <select class="custom-select" id="group_id">
+                                {% if user.is_superuser %}
+                                    <option value="0">全て</option>
+                                    {% for group in group_list %}
+                                        <option value="{{group.id}}">{{group.name}}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="{{ user.groups.all.0.id}}">{{user.groups.all.0.name}}</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <button  id="btnAdd" type="button" class="btn btn-primary mb-3">
+                        <i class="fa fa-user-plus"></i> 追加
+                    </button>
+                    <table id="userTable"
+                           class="table responsive table-hover table-bordered dataTable no-footer table-full-width" cellspacing="0"
+                           style="width:100%">
+                        <thead>
+                        <tr>
+                            <th>NO</th>
+                            <th>メールアドレス</th>
+                            <th>名前</th>
+                            <th>性別</th>
+                            <th>生年月日</th>
+                            <th>身長</th>
+                            <th>体重</th>
+                            <!--<th>最終ログイン時間</th>-->
+                            <th style="width: 180px">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="user_creater" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md" role="document" style="z-index: 1050;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">ユーザー登録</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div id="create_part" class="clearfix margin-bottom-10">
+                        <form id="user_reg_form" accept-charset="UTF-8" class="sky-form" action="{% url 'register' %}"
+                              method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value=""/>
+                            <input type="hidden" name="group_id" value="0"/>
+                            <fieldset>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">メールアドレス</label>
+                                            <div class="fg-line" id="ct_email">
+                                                <input id="email" name="email" type="email" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">名前</label>
+                                            <div class="fg-line" id="ct_name">
+                                                <input id="name" name="name" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">性別</label>
+                                            <label class="input">
+                                                <select class="form-control" id="gender" name="gender"
+                                                        style="height:34px;">
+                                                    <option value="0">男</option>
+                                                    <option value="1">女</option>
+                                                    <option value="2">その他</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">生年月日</label>
+                                            <div class="fg-line input-append date" id="ct_birth">
+                                                <input type="text" name="birthday" id="birthday" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">身長</label>
+                                            <div class="fg-line" id="ct_height">
+                                                <input id="height" name="height" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">体重</label>
+                                            <div class="fg-line" id="ct_weight">
+                                                <input id="weight" name="weight" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">運動習慣</label>
+                                            <label class="input">
+                                                <select class="form-control" id="habbit" name="habbit"
+                                                        style="height:34px;">
+                                                    <option value="0">軽く汗ばむ程度の運動習慣はない</option>
+                                                    <option value="1">月に2～3回は運動する</option>
+                                                    <option value="2">週に1回は運動する</option>
+                                                    <option value="3">週に2回以上は運動する</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">歩幅</label>
+                                            <label class="input">
+                                                <select class="form-control" id="step_size" name="step_size"
+                                                        style="height:34px;">
+                                                    <option value="0">関節痛等の問題があり歩幅を伸ばしにくい</option>
+                                                    <option value="1">じっくりと歩幅伸長に取り組みたい</option>
+                                                    <option value="2">すでに歩幅には自信があり維持したい</option>
+                                                    <option value="3">積極的に歩幅伸長に取り組みたい</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <footer style="float: right">
+                                <button type="button" class="btn btn-success" data-dismiss="modal">キャンセル</button>
+                                <button type="submit" id="info_update" class="btn btn-primary">適用</button>
+                            </footer>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="user_data_print" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md" style="z-index: 1050;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">データ ダウンロード</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="clearfix">
+                        <table id="table_machine" class="responsive display nowrap table table-bordered table-hover" cellspacing="0"
+                               width="100%">
+                            <thead>
+                            <tr>
+                                <th>NO</th>
+                                <th>マシン ID</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+
+        function DtRender_user_function(data, type, full, meta)
+        {
+            var user_link = "{% url 'user.dashboard' %}" + "?user_id=" + full.user_id;
+            var html =
+                '<button name="editUser" data-id="' + full.user_id +
+                '" style="padding: 5px 10px 5px 10px;" class="btn btn-info" onclick="DtRender_bt_editmember(' + full.user_id +
+                ');"><i class="fa fa-edit"></i></button>&nbsp;&nbsp;&nbsp;' +
+                '<button name="delUser" data-id="' + full.user_id +
+                '" style="padding: 5px 10px 5px 10px;" class="btn btn-danger" onclick="DtRender_bt_delmember(' + full.user_id +
+                ');"><i class="fa fa-trash"></i></button>&nbsp;&nbsp;&nbsp;' +
+                '<button name="downUser" data-id="' + full.user_id +
+                '" style="padding: 5px 10px 5px 10px;" class="btn btn-default" onclick="DtRender_bt_download(' + full.user_id +
+                ');"><i class="fa fa-download"></i></button>&nbsp;&nbsp;&nbsp;' +
+                '<button name="downUser" data-id="' + full.user_id +
+                '" style="padding: 5px 10px 5px 10px;" class="btn btn-default" onclick="window.location.href=\'' + user_link +
+                '\';"><i class="fa fa-eye"></i></button>';
+
+            return html;
+        }
+
+        function DtRender_download_function(data, type, full, meta)
+        {
+            if( data == null || data == undefined || data == "" )
+                return "";
+
+            return [
+                    "<a href='download/", full.email ,"/", full.machine_id, "/' target='_blank'>",
+                    full.machine_id,
+                    "</a>"
+                ].join('');
+        }
+
+        function DtRender_user_gender(data, type, full, meta)
+        {
+            var gender = "男";
+            if (data === 1)
+                gender = "女";
+            else if (data === 2)
+                gender = "その他";
+            return gender;
+        }
+
+        function DtRender_bt_user(user_id,
+                                  email,
+                                  user_name,
+                                  gender,
+                                  birthday,
+                                  height,
+                                  weight,
+                                  habbit,
+                                  step_size)
+        {
+            if (email === undefined) email = "";
+            if (user_name === undefined) user_name = "";
+            if (gender === undefined) gender = "0";
+            if (birthday === undefined) birthday = "";
+            if (height === undefined) height = "";
+            if (weight === undefined) weight = "";
+            if (habbit === undefined) habbit = "0";
+            if (step_size === undefined) step_size = "0";
+
+            var $form = $("form#user_reg_form"),
+                path_action = $form.attr("action");
+
+            $form.find('em').remove();
+            $('.state-error').removeClass("state-error");
+            $('.state-success').removeClass("state-success");
+            $('.invalid').removeClass("invalid");
+            $('.valid').removeClass("valid");
+
+            if (user_id !== undefined) {
+                $form.attr("action", path_action.replace("register", "update"));
+                $("#user_creater").find(".modal-title").html('ユーザー情報変更');
+                $("[name=user_id]").val(user_id);
+                $("#email").attr('readonly', true);
+            } else {
+                $form.attr("action", path_action.replace("update", "register"));
+                $("#user_creater").find(".modal-title").html('ユーザー登録');
+                $("[name=user_id]").val('');
+                $("#email").attr('readonly', false);
+            }
+
+            $("#email").val(email);
+            $("#name").val(user_name);
+            $("#gender").val(gender);
+            $("#birthday").val(birthday);
+            $("#height").val(height);
+            $("#weight").val(weight);
+            $("#habbit").val(habbit);
+            $("#step_size").val(step_size);
+        }
+
+        $(document).ready(function () {
+
+            $("#birthday").datepicker({
+                format: 'yyyy-mm-dd',
+                prevText: '<i class="fa fa-angle-left"></i>',
+                nextText: '<i class="fa fa-angle-right"></i>'
+            });
+
+            $('#userTable').dataTable({
+                "scrollX": true,
+                processing: true,
+                serverSide: true,
+                pageLength: 10,
+                language: {
+                    "sProcessing": "処理中...",
+                    "sSearch": "検索キー",
+                    "sLengthMenu": "顕示 &nbsp; _MENU_ &nbsp;項",
+                    "sZeroRecords": "検索結果がありません。",
+                    "sInfo": "顕示 _START_ から _END_ 項結果，総て _TOTAL_ 項",
+                    "sInfoEmpty": "顕示 0から 0項結果，総て 0項')",
+                    "sEmptyTable": "検索結果がありません。",
+                    "sLoadingRecords": "ローディング中...",
+                    "paginate": {
+                        "previous": "以前",
+                        "next": "以後"
+                    }
+                },
+                ajax: {
+                    "url": "{% url 'getUserList' %}",
+                    "type": "POST",
+                    data: function ( d ) {
+                        $.extend(d, { group_id : $("#group_id").val()});
+                    }
+                },
+                columns: [
+                    {name: "number", data: "number", defaultContent: "", className: "dt-center", orderable: false},
+                    {name: "email", data: "email", defaultContent: "", className: "dt-center", orderable: false},
+                    {name: "name", data: "name", defaultContent: "", className: "dt-center"},
+                    {
+                        name: "gender",
+                        data: "gender",
+                        defaultContent: "",
+                        className: "dt-center",
+                        render: DtRender_user_gender
+                    },
+                    {name: "birthday", data: "birthday", defaultContent: "", className: "dt-center",},
+                    {name: "height", data: "height", defaultContent: "", className: "dt-center", orderable: false},
+                    {name: "weight", data: "weight", defaultContent: "", className: "dt-center", orderable: false},
+                    /*{name: "last_login", data: "last_login", defaultContent: "", className: "dt-center", orderable: false, searchable:false},*/
+                    {
+                        name: "user_id",
+                        data: "user_id",
+                        defaultContent: "",
+                        className: "dt-center",
+                        orderable: false,
+                        render: DtRender_user_function
+                    }
+                ],
+                order: [[7, 'desc']]
+            }) ;
+
+            $("#group_id").change(function () {
+                $('#userTable').DataTable().ajax.reload();
+            });
+
+            var t_machine = $('#table_machine').dataTable({
+                processing : true,
+                serverSide : true,
+                paging:   false,
+                ordering: false,
+                info:     false,
+                //"scrollX": true,
+                searching: false,
+                pageLength : 10,
+                language: {
+                    "sProcessing": "処理中...",
+                    "sSearch": "検索キー",
+                    "sLengthMenu": "顕示 &nbsp; _MENU_ &nbsp;項",
+                    "sZeroRecords": "検索結果がありません。",
+                    "sInfo": "顕示 _START_ から _END_ 項結果，総て _TOTAL_ 項",
+                    "sInfoEmpty": "顕示 0から 0項結果，総て 0項')",
+                    "sEmptyTable": "検索結果がありません。",
+                    "sLoadingRecords": "ローディング中...",
+                    "paginate": {
+                        "previous": "以前",
+                        "next": "以後"
+                    }
+                },
+                ajax : {
+                    url:"{% url 'getUserMachineList' %}",
+                    type: "POST",
+                    data: function ( d ) {
+                        var token = $("input[name='csrfmiddlewaretoken']").val();
+                        $.extend(d, { user_id : '0', csrfmiddlewaretoken: token});
+                        d.supersearch = $('.my-filter').val();
+                        // Retrieve dynamic parameters
+                        var dt_params = $('#table_machine').data('dt_params');
+                        // Add dynamic parameters to the data object sent to the server
+                        if(dt_params){ $.extend(d, dt_params); }
+                    }
+                },
+                columns : [
+                            {name: "number", data: "number", defaultContent: "", className: "dt-center", orderable: false},
+                            {name: "machine_id", data: "machine_id", defaultContent: "", className: "dt-center", orderable: false, render: DtRender_download_function}
+                          ]
+            });
+
+            $.fn.dataTable.ext.errMode = 'none';
+            t_machine.on( 'error.dt', function ( e, settings, techNote, message ) {
+                //location.reload();
+                console.log( 'An error has been reported by DataTables: ', message );
+            } );
+
+            t_machine.on("draw.dt", function() {
+                var emptycol_num = $("#table_machine>thead").find("th").length;
+	            $("#table_machine").find(".dataTables_empty").attr("colspan", emptycol_num);
+            });
+
+            DtRender_bt_editmember = function (mem_id) {
+                var member_id = mem_id;
+                var success = function (data) {
+                        DtRender_bt_user(
+                            data.id,
+                            data.email,
+                            data.name,
+                            data.gender,
+                            data.birthday,
+                            data.height,
+                            data.weight,
+                            data.habbit,
+                            data.step_size
+                        );
+                        $('#user_creater').modal({backdrop: 'static', keyboard: false});
+                        $("#user_creater").modal('show');
+                    },
+                    error = function (data) {
+                        new PNotify({
+                            title: "エラー!",
+                            text: error_msg(data),
+                            delay: 3000,
+                            type: 'error'
+                        });
+                    };
+                ajax_json(
+                    "POST",
+                    "{% url 'getUserInfo' %}",
+                    {
+                         user_id: member_id
+                    },
+                    success,
+                    error,
+                    true
+                );
+            };
+
+            DtRender_bt_delmember = function (mem_id) {
+                member_id = mem_id;
+                swal({
+                    title: "本当に削除するだろうか!",
+                    text: "ユーザーはデータベースから削除されます。",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "はい",
+                    cancelButtonText: "いいえ",
+                    closeOnConfirm: false
+                }, function () {
+                    var success = function (data) {
+                            swal.close();
+                            $('#userTable').DataTable().ajax.reload();
+                        },
+                        error = function (data) {
+                            swal.close();
+                            new PNotify({
+                                title: "エラー!",
+                                text: error_msg(data),
+                                delay: 3000,
+                                type: 'error'
+                            });
+                        };
+                    ajax_json(
+                        "POST",
+                        "{% url 'delUser' %}",
+                        {
+                             user_id: member_id
+                        },
+                        success,
+                        error,
+                        true
+                    );
+                });
+            };
+
+            DtRender_bt_download = function (mem_id) {
+                $('#table_machine').data('dt_params', { user_id : mem_id});
+                // Redraw data table, causes data to be reloaded
+                $('#table_machine').DataTable().ajax.reload();
+
+                $('#user_data_print').modal({backdrop: 'static', keyboard: false});
+                $("#user_data_print").modal('show');
+            };
+
+            $("#btnAdd").on("click", function () {
+                DtRender_bt_user();
+                $('#user_creater').modal({backdrop: 'static', keyboard: false});
+                $("#user_creater").modal('show');
+            });
+
+            // Validation for login form
+            $("#user_reg_form").validate({
+                // Rules for form validation
+                rules: {
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    name: {
+                        required: true
+                    },
+                    birthday: {
+                        required: true
+                    },
+                    height: {
+                        required: true,
+                        number: true
+                    },
+                    weight: {
+                        required: true,
+                        number: true
+                    }
+                },
+
+                // Messages for form validation
+                messages: {
+                    email: {
+                        required: 'メールアドレスを入力してください。',
+                        email: 'メールアドレスを正確に入力してください。'
+                    },
+                    name: {
+                        required: 'ユーザの実名を入力してください。'
+                    },
+                    birthday: {
+                        required: '生年月日を入力してください。'
+                    },
+                    height: {
+                        required: '身長を入力してください。',
+                        number: '数字を入力してください。'
+                    },
+                    weight: {
+                        required: '体重を入力してください。',
+                        number: '数字を入力してください。'
+                    }
+                },
+
+                // Do not change code below
+                errorPlacement: function (error, element) {
+                    if ($(element).attr("name") == "email") {
+                        error.insertAfter(element.parent());
+                    } else if ($(element).attr("name") == "name") {
+                        error.insertAfter(element.parent());
+                    } else if ($(element).attr("name") == "birthday") {
+                        error.insertAfter(element.parent());
+                    } else if ($(element).attr("name") == "height") {
+                        error.insertAfter(element.parent());
+                    } else if ($(element).attr("name") == "weight") {
+                        error.insertAfter(element.parent());
+                    } else {
+                        $(element).parent().parent().addClass("state-error");
+                        $(error).insertAfter(element.parent().parent());
+                    }
+                },
+
+                submitHandler: function (form) {
+                    var action = $("form#user_reg_form").attr("action");
+                    $("input[name=group_id]").val($("#group_id").val());
+                    var fd = new FormData($("form#user_reg_form")[0]);
+                    var success = function (data) {
+                            $('#userTable').DataTable().ajax.reload();
+                            $("#user_creater").modal('hide');
+                        },
+                        error = function (data) {
+                            new PNotify({
+                                title: "登録エラー",
+                                text: error_msg(data),
+                                delay: 3000,
+                                type: 'error'
+                            });
+                        };
+                    ajax_form(
+                        "POST",
+                        action,
+                        fd,
+                        success,
+                        error
+                    );
+                }
+            });
+        });
+
+    </script>
+{% endblock %}

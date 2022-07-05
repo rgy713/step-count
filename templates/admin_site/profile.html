@@ -1,0 +1,154 @@
+{% extends "admin_site/base_site.html" %}
+{% load i18n static %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+    <div class="app-title">
+        <div>
+            <h1><i class="fa fa-th-list"></i>プロフィール</h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+            <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+            <li class="breadcrumb-item active"><a href="#">プロフィール</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-8 m-auto">
+            <div class="tile">
+                <div class="tile-body">
+                    <div class="input-group row m-0 pt-2">
+                        <label for="email" class="col-3 col-form-label">メールアドレス:</label>
+                        <div class="col-9">
+                            <input id="email" name="email" class="form-control" type="email" value="{{user.email}}" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if user.is_superuser == 0 %}
+    <div class="row">
+        <div class="col-lg-6 col-md-8 m-auto">
+            <div class="tile">
+                <div class="tile-body">
+                    <form id="changeGroupName" action="{% url 'admin.change_group_name' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="input-group row m-0 pt-2">
+                            <label for="old_password" class="col-3 col-form-label">グループ名:</label>
+                            <div class="col-9">
+                                <input name="name" class="form-control" type="text" id="name" required value="{{user.groups.all.0.name}}">
+                            </div>
+                        </div>
+                        <div class="input-group row m-0 pt-2">
+                            <button type="submit" class="btn-primary px-4 py-2 m-auto">適用</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-lg-6 col-md-8 m-auto">
+            <div class="tile">
+                <div class="tile-body">
+                    <form id="changePassword" action="{% url 'admin.change_password' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="input-group row m-0 pt-2">
+                            <label for="old_password" class="col-3 col-form-label">以前のパスワード:</label>
+                            <div class="col-9">
+                                <input name="old_password" class="form-control" type="password" id="old_password"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="input-group row m-0 pt-2">
+                            <label for="new_password" class="col-3 col-form-label">新しいパスワード:</label>
+                            <div class="col-9">
+                                <input name="new_password" class="form-control" type="password" id="new_password"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="input-group row m-0 pt-2">
+                            <label for="confirm_password" class="col-3 col-form-label">パスワード確認:</label>
+                            <div class="col-9">
+                                <input name="confirm_password" class="form-control" type="password" id="confirm_password"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="input-group row m-0 pt-2">
+                            <button type="submit" class="btn-primary px-4 py-2 m-auto">適用</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        {% if user.is_superuser == 0 %}
+        $("#changeGroupName").validate({
+            lang: 'ja',
+            rules: {
+                name: {required: true},
+            },
+            submitHandler: function (form) {
+                var action = $("#changeGroupName").attr("action");
+                var fd = new FormData($("#changeGroupName")[0]);
+                var success = function (data) {
+                        new PNotify({
+                            title: "SUCCESSS",
+                            text: "",
+                            delay: 3000,
+                            type: 'success'
+                        });
+                    },
+                    error = function (data) {
+                        new PNotify({
+                            title: "エラー!",
+                            text: error_msg(data),
+                            delay: 3000,
+                            type: 'error'
+                        });
+                    };
+                ajax_form("POST", action, fd, success, error);
+            }
+        });
+        {% endif %}
+
+        $("#changePassword").validate({
+            lang: 'ja',
+            rules: {
+                old_password: {required: true},
+                new_password: {required: true},
+                confirm_password: {required: true, equalTo: '#new_password'},
+            },
+            submitHandler: function (form) {
+                var action = $("#changePassword").attr("action");
+                var fd = new FormData($("#changePassword")[0]);
+                var success = function (data) {
+                        new PNotify({
+                            title: "SUCCESSS",
+                            text: "",
+                            delay: 3000,
+                            type: 'success'
+                        });
+                        location.href=location.href;
+                    },
+                    error = function (data) {
+                        new PNotify({
+                            title: "エラー!",
+                            text: error_msg(data),
+                            delay: 3000,
+                            type: 'error'
+                        });
+                    };
+                ajax_form("POST", action, fd, success, error);
+            }
+        });
+    </script>
+{% endblock %}

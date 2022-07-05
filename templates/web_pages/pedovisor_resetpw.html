@@ -1,0 +1,120 @@
+{% extends "web_pages/layout.html" %}
+{% block content %}
+{% include "web_pages/header_f1.html" %}
+{% load i18n static %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-md-8 col-lg-7 mx-auto">
+            <div class="card my-5">
+                <div class="card-body">
+                    <h1 class="card-title text-center" id="myModalLabel4">パスワード再登録</h1>
+                    {% if error %}
+                    <p style="color:red;">{{error}}</p>
+                    {% endif %}
+                    <div id="create_part" class="clearfix margin-bottom-10">
+                        <form id="reset_form" accept-charset="UTF-8" class="sky-form"
+                              action="{% url 'pedovisor_resetpw' %}"
+                              method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <fieldset>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">メールアドレス</label>
+                                            <div class="fg-line" id="ct_email">
+                                                <input id="email" name="email" type="email" class="form-control"
+                                                       readonly value="{{email}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="pass1">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">パスワード</label>
+                                            <div class="fg-line" id="ct_pass">
+                                                <input id="password" name="password" type="password"
+                                                       class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="pass2">
+                                    <div class="col-sm-12">
+                                        <div class="form-group fg-float ">
+                                            <label class="fg-label">パスワード確認</label>
+                                            <div class="fg-line" id="ct_passcf">
+                                                <input id="passwordcf" name="passwordcf" type="password"
+                                                       class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <footer class="float-right">
+                                <a class="mr-3" href="{% url 'pedovisor_login' %}">ログインウィンドウで</a>
+                                <button type="submit" id="info_update" class="btn btn-primary pl-5 pr-5">適用</button>
+                            </footer>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $("#reset_form").validate({
+            // Rules for form validation
+            rules: {
+                email: {
+                    required: true,
+                    email: true
+                },
+                password: {
+                    required: true,
+                    minlength: 3
+                },
+                passwordcf: {
+                    required: true,
+                    minlength: 3,
+                    equalTo: "#password"
+                },
+            },
+
+            // Messages for form validation
+            messages: {
+                email: {
+                    required: 'メールアドレスを入力してください。',
+                    email: 'メールアドレスを正確に入力してください。'
+                },
+                password: {
+                    required: 'パスワードを入力してください。',
+                    minlength: 'パスワードを8席以上に設定してください。'
+                },
+                passwordcf: {
+                    required: 'パスワードを入力しなおしてください。',
+                    minlength: 'パスワードを8席以上に設定してください。',
+                    equalTo: 'パスワードと一致しません。'
+                },
+            },
+
+            // Do not change code below
+            errorPlacement: function (error, element) {
+                if ($(element).attr("name") == "email") {
+                    error.insertAfter(element.parent());
+                } else if ($(element).attr("name") == "password") {
+                    error.insertAfter(element.parent());
+                } else if ($(element).attr("name") == "passwordcf") {
+                    error.insertAfter(element.parent());
+                } else {
+                    $(element).parent().parent().addClass("state-error");
+                    $(error).insertAfter(element.parent().parent());
+                }
+            }
+        });
+    });
+</script>
+{% include "web_pages/footer.html" %}
+{% endblock %}

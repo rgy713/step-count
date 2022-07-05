@@ -1,0 +1,63 @@
+{% extends "web_pages/layout.html" %}
+{% block content %}
+{% include "web_pages/header_f1.html" %}
+{% load i18n static %}
+
+<link href="{% static 'assets/plugins/fullcalendar/fullcalendar.css'%}" rel='stylesheet' />
+<link href="{% static 'assets/plugins/fullcalendar/fullcalendar.print.css' %}" rel='stylesheet' media='print' />
+<script src="{% static 'assets/plugins/fullcalendar/fullcalendar.js' %}"></script>
+<script src="{% static 'assets/plugins/fullcalendar/locale-all.js' %}"></script>
+
+{% include "web_pages/nav.html" %}
+<div class="container">
+    <section class="row">
+        <div id='calendar' class="col-md-12 mt-5 mb-5"></div>
+    </section>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#calendar').fullCalendar({
+            locale: 'ja',
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay,listWeek'
+            },
+            // editable: true,
+            navLinks: true, // can click day/week names to navigate views
+            eventLimit: true, // allow "more" link when too many events
+            events: function (start, end, timezone, callback) {
+                $.ajax({
+                    url: "{% url 'pedovisor_get_event_list' %}",
+                    dataType: 'json',
+                    data: {
+                        start: local2utc(start),
+                        end: local2utc(end)
+                    },
+                    success: function (data) {
+                        if(data.type == 'success') {
+                            var events = [];
+                            for( var i = 0; i<data.content.length;i++){
+                                var one = data.content[i];
+                                events.push({
+                                    "title" : one.title ? one.title: "Walking",
+                                    "start" : utc2local(one.start),
+                                    // "end" : utc2local(one.end),
+                                    "url" : "{% url 'pedovisor_dashboard'%}" + "?data_id=" + one.id
+                                });
+                            }
+                            callback(events);
+                        }
+                    }
+                });
+            },
+            loading: function (bool) {
+                $('#loading').toggle(bool);
+            },
+            height:720
+        });
+    });
+
+</script>
+{% include "web_pages/footer.html" %}
+{% endblock %}

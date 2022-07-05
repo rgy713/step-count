@@ -1,0 +1,7 @@
+
+.idea
+.svn
+
+django_project/settings.py.global
+django_project/settings.py.local
+django_project/settings.py
